@@ -20,14 +20,15 @@ class TestOrdersDetailModel(TestCase):
                '"paymentChannel": 0, "paymentScenarios": "OTHER", "storeAddress": "StoreAddress", ' \
                '"totalNoDiscount": 12, "payedTotal": 12, "storeGPSLatitude": "undefined", ' \
                '"storeCreateDateTS": 1540793134000, "storeCity": "长沙市", "memberID": "0"}'
-        data_dict = json.loads(data)
+        orders_model = OrdersModel(data)
+        orders_detail_model = orders_model.orders_detail_model_list[0]
 
-        model = OrdersDetailModel(data_dict['orderID'], data_dict['product'][0])
+
         excepted = "INSERT INTO orders_detail(order_id, barcode, name, count, price_per, retail_price, " \
                    "trade_price, category_id, unit_id) VALUES('154243648991517662217', " \
                    "'6901028300056', '南京特醇', 1, 12, 12, 11, 1, 8)"
 
-        self.assertEqual(excepted, model.generate_insert_sql())
+        self.assertEqual(excepted, orders_detail_model.generate_insert_sql())
 
         excepted = "154243648991517662217,6901028300056,1,南京特醇,8,12,12,11,1"
-        self.assertEqual(excepted, model.to_csv())
+        self.assertEqual(excepted, orders_detail_model.to_csv())

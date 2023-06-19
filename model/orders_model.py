@@ -56,6 +56,11 @@ class OrdersModel:
         self.store_create_date_ts = data['storeCreateDateTS']       # 店铺创建时间
         self.store_city = data['storeCity']                         # 店铺所在城市
         self.member_id = data['memberID']                           # 会员ID
+
+        self.orders_detail_model_list = []                          # 订单详情模型list
+        for product_dict in data['product']:
+            model = OrdersDetailModel(self.order_id, product_dict)
+            self.orders_detail_model_list.append(model)
     
     def generate_insert_sql(self, table_name=db_config.target_orders_table_name):
         """生成INSERT SQL语句"""
