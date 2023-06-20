@@ -14,3 +14,6 @@ metadata_orders_processed_table_name = \
 target_orders_table_name = 'orders'                 # 目标库订单表，表名
 target_orders_detail_table_name = 'orders_detail'   # 目标库订单表，表名
 
+# 单元测试相关
+unittest_db_name = 'unittest'
+
