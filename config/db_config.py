@@ -9,6 +9,10 @@
 # 元数据相关数据库配置记录
 metadata_orders_processed_table_name = \
     'orders_processed_files'                        # 记录了元数据表的表名
+metadata_orders_processed_table_create_cols_define = \
+    f"id int auto_increment primary key, " \
+    f"path varchar(255), " \
+    f"processed_date varchar(255)"
 metadata_db_name = 'metadata'
 metadata_host = "localhost"
 metadata_port = 3306

@@ -47,6 +47,21 @@ class MySQLUtil:
 
         return r_list
 
+    def query_result_single_column(self, db, sql):
+        """
+        针对单列的SELECT查询，将结果封装到list内返回
+        Note：如果你查询了多列，结果也只返回第一列
+        :param db: 数据库
+        :param sql: 查询SQL
+        :return: list
+        """
+        r = self.query(db, sql)
+        r_list = []                 # 结果list
+        for line_tuple in r:
+            r_list.append(line_tuple[0])
+
+        return r_list
+
     def check_table_exists(self, db, table_name):
         """
         检查指定的表是否存在
