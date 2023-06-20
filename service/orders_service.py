@@ -10,6 +10,7 @@ import os
 from config import project_config, db_config
 from util.mysql_util import MySQLUtil
 from util import str_util, file_util
+from model.orders_model import OrdersModel, OrdersDetailModel
 
 
 class OrdersService:
@@ -34,14 +35,30 @@ class OrdersService:
         # 1. 获取需要处理的文件
         files: list = self.get_need_to_process_file_list()
 
-        # 2. 转model对象
-        # models_list = xxx()
+        # 2. 转model对象，得到list内含的都是订单模型对象
+        models_list = self.get_models_list(files)
         # # 3. 转insert sql插入
         # mysql_xxx(models_list)
         # # 4. 写出csv
         # csv_xxx(models_list)
         # # 5. 记录元数据
         # metadata_xxx(files)
+
+    def get_models_list(self, files):
+        """
+        读取文件，转换成订单模型，封装到list内
+        :param files: list记录文件路径
+        :return: list（内函OrdersModel对象）
+        """
+        models_list = []
+        for path in files:
+            for line in open(path, 'r', encoding="UTF-8").readlines():
+                # 去除尾部换行符
+                line = line.strip()
+                model = OrdersModel(line)
+                models_list.append(model)
+
+        return models_list
 
     def get_need_to_process_file_list(
             self,
