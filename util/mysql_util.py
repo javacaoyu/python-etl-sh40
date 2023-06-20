@@ -71,7 +71,7 @@ class MySQLUtil:
         if not self.check_table_exists(db, table_name):
             self.conn.select_db(db)                             # 选择数据库
             sql = f"CREATE TABLE {table_name}({cols_define})"   # 组装SQL
-            self.conn.cursor().execute(sql)
+            self.execute(db, sql)
             return True
         else:
             self.logger.warning(f"表：{table_name}已经存在，本方法不创建，跳过。")
@@ -79,3 +79,31 @@ class MySQLUtil:
 
     def close(self):
         self.conn.close()
+
+    def execute(self, db, sql):
+        """
+        执行无返回值的相关sql语句，如create、insert等
+        不关系是否自动提交
+        :param db: 操作的数据库
+        :param sql: 执行的sql
+        :return: None
+        """
+        self.conn.select_db(db)                         # 选择数据库
+        cursor = self.conn.cursor()                     # 游标对象
+        try:
+            cursor.execute(sql)
+        except Exception as e:
+            self.logger.error(f"执行SQL语句出错，执行的SQL是：{sql}")
+            raise e
+
+    def execute_force_commit(self, db, sql):
+        """
+        执行无返回值的相关sql语句，如create、insert等
+        100%提交
+        :param db: 操作的数据库
+        :param sql: 执行的sql
+        :return: None
+        """
+        self.execute(db, sql)
+        self.conn.commit()
+
