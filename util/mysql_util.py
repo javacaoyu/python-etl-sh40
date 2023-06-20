@@ -106,4 +106,3 @@ class MySQLUtil:
         """
         self.execute(db, sql)
         self.conn.commit()
-
