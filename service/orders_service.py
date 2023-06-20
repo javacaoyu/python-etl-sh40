@@ -63,11 +63,7 @@ class OrdersService:
         )
 
         # 3. 读取文件列表
-        all_files_list = []  # 记录全部的文件list
-        for name in os.listdir(files_dir):
-            file_absolute_path = files_dir + "/" + name
-            # 对路径符号，进行统一处理，都设置为单左斜杠
-            all_files_list.append(str_util.unite_path_slash(file_absolute_path))
+        all_files_list = file_util.get_files_list(files_dir)
 
         # 4. 对比找出需要处理的
         need_to_processed_file_list = file_util.get_new_by_two_list_compare(

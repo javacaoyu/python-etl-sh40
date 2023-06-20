@@ -1,6 +1,4 @@
+import os
 
-
-
-a = ( (1, ) , (2, ))
-
-print( (1, ) in a )
+names = os.listdir("E:/pyetl-data")
+print(names)
