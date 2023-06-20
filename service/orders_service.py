@@ -37,12 +37,28 @@ class OrdersService:
 
         # 2. 转model对象，得到list内含的都是订单模型对象
         models_list = self.get_models_list(files)
-        # # 3. 转insert sql插入
-        # mysql_xxx(models_list)
-        # # 4. 写出csv
-        # csv_xxx(models_list)
+
+        # 3. 写出（包含MySQL写出和CSV写出）
+        self.write(models_list)
         # # 5. 记录元数据
         # metadata_xxx(files)
+
+    def write(self, models_list):
+        # 开启事务
+        self.target_mysql_util.conn.begin()
+        # 1. 写出MySQL
+        try:
+            self.write_to_mysql(models_list)
+        except Exception as e:
+            # 打日志
+            self.target_mysql_util.conn.rollback()
+            raise e
+
+        # 关闭事务
+        self.target_mysql_util.conn.commit()
+        # 2. 写出CSV(写出的文件名是xxx.csv.tmp)，如果MySQL OK，.tmp后缀删除
+        self.write_to_csv(models_list)
+        self.file_remove()
 
     def get_models_list(self, files):
         """
