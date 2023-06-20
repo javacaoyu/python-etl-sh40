@@ -15,11 +15,11 @@ class TestMySQLUtil(TestCase):
     def setUp(self) -> None:
         """执行任何测试方法前，先跑它"""
         self.mysql_util = MySQLUtil(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='123456',
-            charset='UTF8'
+            host=db_config.unittest_host,
+            port=db_config.unittest_port,
+            user=db_config.unittest_user,
+            password=db_config.unittest_password,
+            charset=db_config.unittest_charset
         )
         self.mysql_util.conn.select_db(db_config.unittest_db_name)
 
