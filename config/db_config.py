@@ -6,21 +6,30 @@
 - target：目标记录（库）
 """
 
-# 元数据相关数据库配置记录
+# ---------------------- 元数据相关数据库配置记录 ----------------------
 metadata_orders_processed_table_name = \
-    'orders_processed_files'                        # 记录了元数据表的表名
+    'orders_processed_files'                        # 订单（Json数据文件）采集业务元数据表的表名
 metadata_orders_processed_table_create_cols_define = \
     f"id int auto_increment primary key, " \
     f"path varchar(255), " \
     f"processed_date varchar(255)"
+
+metadata_barcode_processed_table_name = \
+    "barcode_update_time_record"                    # barcode业务元数据表名
+metadata_barcode_processed_table_create_cols_define = \
+    f"id int auto_increment primary key, " \
+    f"last_update varchar(255), " \
+    f"processed_date varchar(255)"
+
 metadata_db_name = 'metadata'
 metadata_host = "localhost"
 metadata_port = 3306
 metadata_user = "root"
 metadata_password = "123456"
 metadata_charset = "UTF8"
+# ----------------------   元数据相关数据库配置记录 ----------------------
 
-# 目标库相关数据配置记录
+# # ---------------------- 目标库相关数据配置记录   ----------------------
 target_orders_table_name = 'orders'                 # 目标库订单表，表名
 target_orders_table_cols_define = \
                           "order_id                    VARCHAR(255) PRIMARY KEY," \
@@ -82,11 +91,16 @@ target_port = 3306
 target_user = "root"
 target_password = "123456"
 target_charset = "UTF8"
+# # ---------------------- 目标库相关数据配置记录 ----------------------
 
-# 单元测试相关
+# # ---------------------- 单元测试库相关 ----------------------
 unittest_db_name = 'unittest'
 unittest_host = "localhost"
 unittest_port = 3306
 unittest_user = "root"
 unittest_password = "123456"
 unittest_charset = "UTF8"
+# # ---------------------- 单元测试库相关 ----------------------
+
+# # ---------------------- 单元测试库相关 ----------------------
+
