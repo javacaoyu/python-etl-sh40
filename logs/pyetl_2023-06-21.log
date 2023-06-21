@@ -1,0 +1,10 @@
+2023-06-21 12:08:22,280 - [INFO] - orders_service.py[line:41]: 【Json订单数据采集】开启本次执行
+2023-06-21 12:08:22,282 - [WARNING] - mysql_util.py[line:99]: 表：orders_processed_files已经存在，本方法不创建，跳过。
+2023-06-21 12:08:22,284 - [INFO] - orders_service.py[line:50]: 【Json订单数据采集】本次需要采集的文件是：['E:/pyetl-data/20230622/x07']，文件条数：1
+2023-06-21 12:08:22,314 - [WARNING] - mysql_util.py[line:99]: 表：orders已经存在，本方法不创建，跳过。
+2023-06-21 12:08:22,315 - [WARNING] - mysql_util.py[line:99]: 表：orders_detail已经存在，本方法不创建，跳过。
+2023-06-21 12:08:23,031 - [INFO] - orders_service.py[line:172]: 【Json订单数据采集】本次即将向数据库提交，orders表：1024条，orders_detail表：1780条。
+2023-06-21 12:08:23,050 - [INFO] - orders_service.py[line:139]: 【Json订单数据采集】写出订单数据到CSV文件：E:/pyetl-data-output/orders_2023-06-21_12_08_22.csv.tmp, 条数：1024, 写出订单详情数据到CSV文件：E:/pyetl-data-output/orders_detail_2023-06-21_12_08_22.csv.tmp, 条数：1780
+2023-06-21 12:08:23,063 - [WARNING] - mysql_util.py[line:99]: 表：orders_processed_files已经存在，本方法不创建，跳过。
+2023-06-21 12:08:23,067 - [INFO] - orders_service.py[line:93]: 【Json订单数据采集】本次处理的文件：['E:/pyetl-data/20230622/x07']已经处理完成，并完成元数据记录。
+2023-06-21 12:08:23,067 - [INFO] - orders_service.py[line:63]: 【Json订单数据采集】程序运行结束。

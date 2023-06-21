@@ -20,6 +20,9 @@ def get_logger(
     # 构建logger对象
     logger = logging.getLogger("python-etl")
 
+    if len(logger.handlers) > 0:
+        return logger
+
     # 设置级别
     logger.setLevel(level)
 

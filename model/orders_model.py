@@ -260,3 +260,5 @@ class OrdersDetailModel:
             f"retailPrice{project_config.csv_output_sep}" \
             f"tradePrice{project_config.csv_output_sep}" \
             f"categoryID"
+
+        return orders_detail_header_str
