@@ -34,13 +34,29 @@ class BarcodeService:
         # 1. 查询元数据库获得上一次的时间
         last_update = self.get_last_update()
         # 2. 组装SQL 语句 查询数据源表
-
+        self.query_source_data(last_update)
         # 3. 封装查询结果到模型list
 
         # 4. 写出MySQL和CSV
 
         # 5. 记录元数据
         pass
+
+    def query_source_data(self, last_update):
+        sql = None
+        if not last_update:
+            sql = f"SELECT * FROM {db_config.source_barcode_table_name} " \
+                  f"WHERE updateAt >= '{last_update}' ORDER BY updateAt"
+        else:
+            sql = f"SELECT * FROM {db_config.source_barcode_table_name} " \
+                  f"ORDER BY updateAt"
+
+        result = self.source_mysql_util.query(
+            db=db_config.source_db_name,
+            sql=sql
+        )
+
+        return result
 
     def get_last_update(self):
         """
