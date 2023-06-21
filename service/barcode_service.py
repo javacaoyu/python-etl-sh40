@@ -37,6 +37,8 @@ class BarcodeService:
         self.barcode_csv_path = project_config.csv_output_root_path + \
                                "/barcode_" + time_util.get_time("%Y-%m-%d_%H_%M_%S") + ".csv.tmp"
 
+        self.max_update_time = None             # 记录本次操作的最大时间用于存储元数据
+
     def start(self):
         # 1. 查询元数据库获得上一次的时间
         last_update = self.get_last_update()
@@ -47,6 +49,22 @@ class BarcodeService:
         # 4. 写出MySQL和CSV
         self.__write(model_list)
         # 5. 记录元数据
+        self.record_metadata()
+
+    def record_metadata(self):
+        sql = f"INSERT INTO {db_config.metadata_barcode_processed_table_name} VALUES (" \
+              f"NULL, '{self.max_update_time}', '{time_util.get_time()}')"
+
+        self.metadata_mysql_util.disable_autocommit()           # 关闭自动提交
+        self.metadata_mysql_util.conn.begin()                   # 开启事务
+        try:
+            self.metadata_mysql_util.execute(db_config.metadata_db_name, sql)
+        except Exception as e:
+            self.logger.critical(f"【MySQL数据采集】元数据记录失败，请立即检查，SQL：{sql}")
+            self.metadata_mysql_util.conn.rollback()            # 事务回滚
+            raise e
+
+        self.metadata_mysql_util.conn.commit()                  # 事务提交
 
     def __write(self, model_list: list):
 
@@ -66,9 +84,25 @@ class BarcodeService:
         file_util.change_file_suffix(self.barcode_csv_path, "", ".tmp")
 
     def __write_to_mysql(self, model_list):
+        # 1. 检查目标表是否存在，不存在创建
+        self.target_mysql_util.check_and_create_table(
+            db=db_config.target_db_name,
+            table_name=db_config.target_barcode_table_name,
+            cols_define=db_config.target_barcode_table_cols_define
+        )
+
+        # 2. 写入数据库表
         for model in model_list:
             sql = model.generate_insert_sql()
             self.target_mysql_util.execute(db_config.target_db_name, sql)
+            # 方法1：
+            # 更新最大时间，查询的SQL是按照此列从小到大排序的，所以，按顺序赋值即可
+            # 最后一条执行完毕，也就是我们要的最大时间来了
+            # self.max_update_time = model.update_at
+
+        # 方法2：
+        # 此方法最好，仅更新内存一次
+        self.max_update_time = model_list[-1].update_at
 
     def __write_to_csv(self, model_list):
         # 1. open
@@ -96,13 +130,13 @@ class BarcodeService:
 
     def query_source_data(self, last_update):
         sql = None
-        if not last_update:
+        if last_update:
             sql = f"SELECT * FROM {db_config.source_barcode_table_name} " \
                   f"WHERE updateAt >= '{last_update}' ORDER BY updateAt"
         else:
             sql = f"SELECT * FROM {db_config.source_barcode_table_name} " \
                   f"ORDER BY updateAt"
-
+        print(sql)
         result = self.source_mysql_util.query(
             db=db_config.source_db_name,
             sql=sql
@@ -133,8 +167,8 @@ class BarcodeService:
         # 3. 准备返回
         last_update = None
         if len(result) > 0:
-            # 如果有结果，结果必然是： ( ('last_update'),  )
-            # 查询结果limit 1只有1条， 查询SELECT 只有1个列，所以[0][0]取出
-            last_update = result[0][0]
+            # 如果有结果，结果必然是：['last_update']
+            # 通过query_result_single_column查询，返回的单值都在一个list内，由于limit 1 只有1个元素
+            last_update = result[0]
 
         return last_update

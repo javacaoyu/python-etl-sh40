@@ -3,6 +3,7 @@
 商品（条码库）信息模型
 """
 from config import db_config, project_config
+from util import str_util
 
 
 class BarcodeModel:
@@ -42,24 +43,24 @@ class BarcodeModel:
         self.img = data_tuple[12]
         self.src = data_tuple[13]
 
-    def generate_insert_sql(self, table_name=db_config.metadata_barcode_processed_table_name):
-        sql = f"INSERT INTO {table_name}(code, name, spec, trademark, addr, units, " \
+    def generate_insert_sql(self, table_name=db_config.target_barcode_table_name):
+        sql = f"INSERT IGNORE INTO {table_name}(code, name, spec, trademark, addr, units, " \
               f"factory_name, trade_price, retail_price, update_at, wholeunit, wholenum, " \
               f"img, src) VALUES(" \
               f"'{self.code}', " \
-              f"'{self.name}', " \
-              f"'{self.spec}', " \
-              f"'{self.trademark}', " \
-              f"'{self.addr}', " \
-              f"'{self.units}', " \
-              f"'{self.factory_name}', " \
-              f"'{self.trade_price}', " \
-              f"'{self.retail_price}', " \
-              f"'{self.update_at}', " \
-              f"'{self.wholeunit}', " \
-              f"{self.wholenum}, " \
-              f"'{self.img}', " \
-              f"'{self.src}'" \
+              f"'{str_util.clean_str(self.name)}', " \
+              f"'{str_util.clean_str(self.spec)}', " \
+              f"'{str_util.clean_str(self.trademark)}', " \
+              f"'{str_util.clean_str(self.addr)}', " \
+              f"'{str_util.clean_str(self.units)}', " \
+              f"'{str_util.clean_str(self.factory_name)}', " \
+              f"'{str_util.clean_str(self.trade_price)}', " \
+              f"'{str_util.clean_str(self.retail_price)}', " \
+              f"'{str_util.clean_str(self.update_at)}', " \
+              f"'{str_util.clean_str(self.wholeunit)}', " \
+              f"{str_util.check_number_null_and_transform_to_sql_null(self.wholenum)}, " \
+              f"'{str_util.clean_str(self.img)}', " \
+              f"'{str_util.clean_str(self.src)}'" \
               f")"
         return sql
 

@@ -40,6 +40,40 @@ def check_null_and_transform_to_sql_null(data) -> str:
     return "'" + str(data) + "'"
 
 
+def check_number_null_and_transform_to_sql_null(data):
+    """
+    检查数字内容是否是无意义，如果是返回NULL字符串，如果不是返回本身
+    :param data: 被判断的字符串
+    :return: NULL或data本身
+    """
+    if check_null(data):
+        # 如果进来表示无意义
+        return "NULL"
+
+    return data
+
+
+def clean_str(data):
+    """
+    清理字符串中一些自带的' " $ # \ /等等
+    -- 娃哈哈水（黑马专供）
+    -- 娃哈哈水黑马专供
+    -- 娃哈哈水'黑马专供'
+    :param data:
+    :return: str
+    """
+    return str(data).replace("\'", "").\
+        replace("\"", "").\
+        replace("$", "").\
+        replace("#", "").\
+        replace("\\", "").\
+        replace("/", "").\
+        replace("&", "").\
+        replace("^", "").\
+        replace(",", "")
+
+
+
 def unite_path_slash(path: str) -> str:
     """
     统一将路径的斜杠，规划为单左斜杠

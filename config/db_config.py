@@ -122,7 +122,7 @@ unittest_charset = "UTF8"
 # # ---------------------- 单元测试库相关 ----------------------
 
 # # ---------------------- 数据源数据库相关 ----------------------
-source_db_name = 'unittest'
+source_db_name = 'source'
 source_host = "localhost"
 source_port = 3306
 source_user = "root"
