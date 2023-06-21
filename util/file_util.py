@@ -3,7 +3,7 @@
 文件相关工具方法
 """
 import os
-import str_util
+from util import str_util
 
 
 def get_new_by_two_list_compare(big_list, small_list):
@@ -41,3 +41,15 @@ def get_files_list(path, recursion=False):
                 result_list += recursion_result
 
     return result_list
+
+
+def change_file_suffix(file_path: str, target_suffix, origin_suffix='.tmp'):
+    """
+    修改文件的后缀名
+    :param file_path: 被修改的文件全路径
+    :param target_suffix: 目标后缀
+    :param origin_suffix: 原始后缀，默认是.tmp
+    :return: None
+    """
+    new_path = file_path.replace(origin_suffix, target_suffix)
+    os.rename(file_path, new_path)

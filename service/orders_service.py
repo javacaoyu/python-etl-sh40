@@ -31,6 +31,11 @@ class OrdersService:
             charset=db_config.target_charset
         )
 
+        self.orders_csv_path = project_config.csv_output_root_path + \
+                          "/orders_" + time_util.get_time("%Y-%m-%d_%H_%M_%S") + ".csv.tmp"
+        self.orders_detail_csv_path = project_config.csv_output_root_path + \
+                                 "/orders_detail_" + time_util.get_time("%Y-%m-%d_%H_%M_%S") + ".csv.tmp"
+
     def start(self):
         # 1. 获取需要处理的文件
         files: list = self.get_need_to_process_file_list()
@@ -59,17 +64,14 @@ class OrdersService:
         # mysql 提交
         self.target_mysql_util.conn.commit()        # 提交
         # csv改名
-        ...
+        file_util.change_file_suffix(self.orders_csv_path, target_suffix="", origin_suffix=".tmp")
+        file_util.change_file_suffix(self.orders_detail_csv_path, target_suffix="", origin_suffix=".tmp")
 
     def __write_to_csv(self, models_list):
-        orders_csv_path = project_config.csv_output_root_path + \
-                          "/orders_" + time_util.get_time("%Y-%m-%d_%H_%M_%S") + ".csv.tmp"
-        orders_detail_csv_path = project_config.csv_output_root_path + \
-                          "/orders_detail_" + time_util.get_time("%Y-%m-%d_%H_%M_%S") + ".csv.tmp"
 
         # 获取写文件对象
-        orders_csv_writer = open(orders_csv_path, 'w', encoding="UTF-8")
-        orders_detail_csv_writer = open(orders_detail_csv_path, 'w', encoding="UTF-8")
+        orders_csv_writer = open(self.orders_csv_path, 'w', encoding="UTF-8")
+        orders_detail_csv_writer = open(self.orders_detail_csv_path, 'w', encoding="UTF-8")
 
         # 写出csv标头
         orders_csv_writer.write(OrdersModel.get_csv_header())
