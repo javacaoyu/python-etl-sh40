@@ -4,6 +4,7 @@
 """
 from util.mysql_util import MySQLUtil
 from config import db_config
+from model.barcode_model import BarcodeModel
 
 class BarcodeService:
 
@@ -34,13 +35,21 @@ class BarcodeService:
         # 1. 查询元数据库获得上一次的时间
         last_update = self.get_last_update()
         # 2. 组装SQL 语句 查询数据源表
-        self.query_source_data(last_update)
+        result = self.query_source_data(last_update)
         # 3. 封装查询结果到模型list
-
+        model_list = self.get_model_list(result)
         # 4. 写出MySQL和CSV
 
         # 5. 记录元数据
         pass
+
+    def get_model_list(self, query_result):
+        model_list = []
+        for line_tuple in query_result:
+            model = BarcodeModel(line_tuple)
+            model_list.append(model)
+
+        return model_list
 
     def query_source_data(self, last_update):
         sql = None
