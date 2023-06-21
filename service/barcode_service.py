@@ -3,8 +3,9 @@
 条码数据采集核心业务逻辑代码
 """
 from util.mysql_util import MySQLUtil
-from config import db_config
+from config import db_config, project_config
 from model.barcode_model import BarcodeModel
+from util import logging_util, time_util, file_util
 
 class BarcodeService:
 
@@ -31,6 +32,11 @@ class BarcodeService:
             charset=db_config.source_charset
         )
 
+        self.logger = logging_util.get_logger()
+
+        self.barcode_csv_path = project_config.csv_output_root_path + \
+                               "/barcode_" + time_util.get_time("%Y-%m-%d_%H_%M_%S") + ".csv.tmp"
+
     def start(self):
         # 1. 查询元数据库获得上一次的时间
         last_update = self.get_last_update()
@@ -39,9 +45,46 @@ class BarcodeService:
         # 3. 封装查询结果到模型list
         model_list = self.get_model_list(result)
         # 4. 写出MySQL和CSV
-
+        self.__write(model_list)
         # 5. 记录元数据
-        pass
+
+    def __write(self, model_list: list):
+
+        self.target_mysql_util.disable_autocommit()         # 关闭自动提交
+        self.target_mysql_util.conn.begin()                 # 开启事务
+        try:
+            self.__write_to_mysql(model_list)
+            self.__write_to_csv(model_list)
+        except Exception as e:
+            self.target_mysql_util.conn.rollback()          # 出错误回滚
+            self.logger.error(f"【MySQL数据采集】写出数据到MySQL或CSV出错，回滚，程序退出。")
+            raise e
+
+        self.target_mysql_util.conn.commit()                # 提交
+
+        # csv改名
+        file_util.change_file_suffix(self.barcode_csv_path, "", ".tmp")
+
+    def __write_to_mysql(self, model_list):
+        for model in model_list:
+            sql = model.generate_insert_sql()
+            self.target_mysql_util.execute(db_config.target_db_name, sql)
+
+    def __write_to_csv(self, model_list):
+        # 1. open
+        csv_writer = open(self.barcode_csv_path, 'w', encoding="UTF-8")
+
+        # 2. 写header
+        csv_writer.write(BarcodeModel.get_csv_header())
+        csv_writer.write("\n")
+
+        # 3. for 写数据
+        for model in model_list:
+            csv_writer.write(model.to_csv())
+            csv_writer.write("\n")
+
+        # 4. close
+        csv_writer.close()
 
     def get_model_list(self, query_result):
         model_list = []
