@@ -45,6 +45,7 @@ class TestMySQLUtil(TestCase):
 
         # 创建新表
         self.mysql_util.execute(db_config.unittest_db_name, 'create table test_exists(id int)')
+
         r = self.mysql_util.check_table_exists(db_config.unittest_db_name, 'test_exists')
         self.assertTrue(r)
 

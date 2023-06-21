@@ -9,7 +9,7 @@ import os
 
 from config import project_config, db_config
 from util.mysql_util import MySQLUtil
-from util import str_util, file_util
+from util import str_util, file_util, time_util
 from model.orders_model import OrdersModel, OrdersDetailModel
 
 
@@ -39,26 +39,85 @@ class OrdersService:
         models_list = self.get_models_list(files)
 
         # 3. 写出（包含MySQL写出和CSV写出）
-        self.write(models_list)
+        self.__write(models_list)
         # # 5. 记录元数据
         # metadata_xxx(files)
 
-    def write(self, models_list):
+    def __write(self, models_list):
+        # 1. to mysql
         # 开启事务
-        self.target_mysql_util.conn.begin()
-        # 1. 写出MySQL
+        self.target_mysql_util.conn.begin()     # 开启事务
         try:
-            self.write_to_mysql(models_list)
+            self.__write_to_mysql(models_list)
+            self.__write_to_csv(models_list)
         except Exception as e:
-            # 打日志
-            self.target_mysql_util.conn.rollback()
+            # 如果有异常，mysql回退，csv不改名
+            self.target_mysql_util.conn.rollback()  # 回滚
             raise e
 
-        # 关闭事务
-        self.target_mysql_util.conn.commit()
-        # 2. 写出CSV(写出的文件名是xxx.csv.tmp)，如果MySQL OK，.tmp后缀删除
-        self.write_to_csv(models_list)
-        self.file_remove()
+        # 没有异常
+        # mysql 提交
+        self.target_mysql_util.conn.commit()        # 提交
+        # csv改名
+        ...
+
+    def __write_to_csv(self, models_list):
+        orders_csv_path = project_config.csv_output_root_path + \
+                          "/orders_" + time_util.get_time("%Y-%m-%d_%H_%M_%S") + ".csv.tmp"
+        orders_detail_csv_path = project_config.csv_output_root_path + \
+                          "/orders_detail_" + time_util.get_time("%Y-%m-%d_%H_%M_%S") + ".csv.tmp"
+
+        # 获取写文件对象
+        orders_csv_writer = open(orders_csv_path, 'w', encoding="UTF-8")
+        orders_detail_csv_writer = open(orders_detail_csv_path, 'w', encoding="UTF-8")
+
+        # 写出csv标头
+        orders_csv_writer.write(OrdersModel.get_csv_header())
+        orders_csv_writer.write("\n")
+        orders_detail_csv_writer.write(OrdersDetailModel.get_csv_header())
+        orders_detail_csv_writer.write("\n")
+
+        for model in models_list:
+            csv_line = model.to_csv()           # 订单 to csv
+            orders_csv_writer.write(csv_line)
+            orders_csv_writer.write("\n")
+            for detail_model in model.orders_detail_model_list:
+                csv_line = detail_model.to_csv()  # 订单详情 to csv
+                orders_detail_csv_writer.write(csv_line)
+                orders_detail_csv_writer.write("\n")
+
+        orders_csv_writer.close()
+        orders_detail_csv_writer.close()
+
+    def __write_to_mysql(self, models_list):
+        """
+        将模型list的内容，写入MySQL数据库(订单表和订单详情表）
+        :return: None
+        """
+        # 如果订单表不存在，提前创建
+        self.target_mysql_util.check_and_create_table(
+            db=db_config.target_db_name,
+            table_name=db_config.target_orders_table_name,
+            cols_define=db_config.target_orders_table_cols_define
+        )
+        # 如果订单详情表不存在，提前创建
+        self.target_mysql_util.check_and_create_table(
+            db=db_config.target_db_name,
+            table_name=db_config.target_orders_detail_table_name,
+            cols_define=db_config.target_orders_detail_table_cols_define
+        )
+
+        # 关闭自动提交，走批量执行
+        self.target_mysql_util.disable_autocommit()
+
+        for model in models_list:
+            sql = model.generate_insert_sql()       # 订单表的插入语句
+            self.target_mysql_util.execute(db_config.target_db_name, sql)
+            for detail_model in model.orders_detail_model_list:
+                sql = detail_model.generate_insert_sql()    # 订单详情表的插入语句
+                self.target_mysql_util.execute(db_config.target_db_name, sql)
+
+
 
     def get_models_list(self, files):
         """

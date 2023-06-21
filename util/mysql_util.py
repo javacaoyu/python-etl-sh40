@@ -24,6 +24,13 @@ class MySQLUtil:
 
         self.logger = logging_util.get_logger()
 
+    def disable_autocommit(self):
+        """
+        关闭自动提交
+        :return: None
+        """
+        self.conn.autocommit(False)
+
     def query(self, db, sql):
         """
         提供sql查询结果

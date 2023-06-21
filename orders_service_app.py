@@ -3,9 +3,9 @@
 订单（Json文件）数据采集，启动逻辑
 """
 from service.orders_service import OrdersService
-
 if __name__ == '__main__':
     OrdersService().start()
+
 
 """
 从逻辑封装中，OrdersService类是对：
