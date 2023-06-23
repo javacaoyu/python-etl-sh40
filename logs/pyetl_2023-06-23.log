@@ -1,1 +1,3 @@
-2023-06-23 15:56:47,386 - [INFO] - backend_service.py[line:39]: 【后台日志采集实战】本次需要处理的文件列表是：['E:/pyetl-data-backend-logs/2023-06-23-15-35-12.log']
+2023-06-23 16:17:52,210 - [WARNING] - mysql_util.py[line:99]: 表：backend_logs_processed_files已经存在，本方法不创建，跳过。
+2023-06-23 16:17:52,212 - [INFO] - backend_service.py[line:40]: 【后台日志采集实战】本次需要处理的文件列表是：['E:/pyetl-data-backend-logs/2023-06-23-15-35-12.log']
+2023-06-23 16:17:52,216 - [INFO] - backend_service.py[line:73]: f【后台日志采集实战】完成将数据读取转换为模型list的工作，本次将有：1024条数据被处理。

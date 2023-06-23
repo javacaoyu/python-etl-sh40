@@ -5,6 +5,7 @@
 from util.mysql_util import MySQLUtil
 from util import file_util, logging_util
 from config import db_config, project_config
+from model.backend_logs_model import BackendLogsModel
 
 
 class BackendService:
@@ -40,12 +41,38 @@ class BackendService:
         else:
             self.logger.info(f"【后台日志采集实战】本次无文件处理，程序退出")
             return None
-        # 2. 将数据文件内容读取，转换为model的list对象
 
+        # 2. 将数据文件内容读取，转换为model的list对象
+        model_list = self.get_model_list(files)
         # 3. 数据写出（写出到MySQL和CSV）
 
         # 4. 记录元数据
         pass
+
+    def get_model_list(self, files):
+        """
+        将files这个list内记录的全部的文件路径，对应的文件内容都读取出来
+        将每一行都转换为模型的实例化对象，然后存入到list内部返回
+        :param files: 即将要处理的文件列表
+        :return: 模型list
+        """
+        model_list = []
+        for path in files:
+            for line in open(path, 'r', encoding="UTF-8").readlines():
+                # line 是每一行数据
+                # 对其去除尾部回车符
+                line = line.strip()
+
+                # 转换为模型对象
+                model = BackendLogsModel(line)
+
+                # 存入list
+                model_list.append(model)
+
+        # 打印日志
+        self.logger.info(f"f【后台日志采集实战】完成将数据读取转换为模型list的工作，本次将有：{len(model_list)}条数据被处理。")
+
+        return model_list
 
 
     def get_need_to_process_file_list(self):

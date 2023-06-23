@@ -111,6 +111,17 @@ target_barcode_table_cols_define = \
      "src            varchar(20) DEFAULT NULL COMMENT '图片地址', " \
      "PRIMARY KEY (`code`)"
 
+target_backend_logs_table_name = "backend_logs"         # 实战后台日志采集数据存储表名
+target_backend_logs_table_cols_define = \
+    "id int primary key auto_increment COMMENT 'ID', " \
+    "log_time varchar(255) COMMENT '日志时间', " \
+    "log_level varchar(255) COMMENT '日志级别', " \
+    "log_module varchar(255) COMMENT '日志模块', " \
+    "respond_time varchar(255) COMMENT '响应时间', " \
+    "province varchar(255) COMMENT '调用后台服务的客户所在省份', " \
+    "city varchar(255) COMMENT '调用后台服务的客户所在城市', " \
+    "message varchar(255) COMMENT '日志正文'"
+
 target_db_name = 'target'
 target_host = "localhost"
 target_port = 3306
