@@ -21,6 +21,13 @@ metadata_barcode_processed_table_create_cols_define = \
     f"last_update varchar(255), " \
     f"processed_date varchar(255)"
 
+metadata_backend_logs_processed_table_name = \
+    "backend_logs_processed_files"                    # barcode业务元数据表名
+metadata_backend_logs_processed_table_create_cols_define = \
+    f"id int auto_increment primary key, " \
+    f"path varchar(255), " \
+    f"processed_date varchar(255)"
+
 metadata_db_name = 'metadata'
 metadata_host = "localhost"
 metadata_port = 3306

@@ -8,7 +8,7 @@ import sys
 import time
 
 single_log_lines = 1024                             # 一个logs文件生成多少行数据
-generate_files = 5                                  # 一次运行生成多少个文件
+generate_files = 1                                  # 一次运行生成多少个文件
 output_path = "E:/pyetl-data-backend-logs/"         # 数据写出的路径
 
 # 前置检查
