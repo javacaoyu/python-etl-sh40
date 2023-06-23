@@ -1,8 +1,0 @@
-2023-06-21 17:49:00,669 - [WARNING] - mysql_util.py[line:99]: 表：barcode_update_time_record已经存在，本方法不创建，跳过。
-2023-06-21 17:49:46,126 - [WARNING] - mysql_util.py[line:99]: 表：barcode_update_time_record已经存在，本方法不创建，跳过。
-2023-06-21 17:51:14,303 - [WARNING] - mysql_util.py[line:99]: 表：barcode_update_time_record已经存在，本方法不创建，跳过。
-2023-06-21 17:51:14,338 - [WARNING] - mysql_util.py[line:99]: 表：barcode已经存在，本方法不创建，跳过。
-2023-06-21 17:51:14,338 - [ERROR] - mysql_util.py[line:118]: 执行SQL语句出错，执行的SQL是：INSERT INTO barcode(code, name, spec, trademark, addr, units, factory_name, trade_price, retail_price, update_at, wholeunit, wholenum, img, src) VALUES('047400197107', '吉列锋速3突破纳米超薄3层刀片（一刀架2刀头）', '1刀架2刀头', '吉列锋', '上海', '个', '', '1', '80', '2017-07-10 19:09:09', 'None', NULL, 'None', 'None')
-2023-06-21 17:51:14,339 - [ERROR] - barcode_service.py[line:78]: 【MySQL数据采集】写出数据到MySQL或CSV出错，回滚，程序退出。
-2023-06-21 17:51:44,516 - [WARNING] - mysql_util.py[line:99]: 表：barcode_update_time_record已经存在，本方法不创建，跳过。
-2023-06-21 17:51:44,554 - [WARNING] - mysql_util.py[line:99]: 表：barcode已经存在，本方法不创建，跳过。
