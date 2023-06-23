@@ -13,7 +13,7 @@ class OrdersModel:
     def __init__(self, data_str: str):
         """
         构造方法，仅需要传入Json字符串即可，能够完成从字符串中抽取列，封装数据到成员属性
-        :param data: Json 字符串
+        :param data_str: Json 字符串
         """
         data = json.loads(data_str)
 
